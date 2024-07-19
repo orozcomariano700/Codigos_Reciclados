@@ -1,0 +1,3 @@
+def limpiar_pantalla():
+    if os.name == 'posix':
+        _ = os.system('clear')
