@@ -1,0 +1,49 @@
+def inicio_sesion():
+    print ('Bienvenido\n')
+    print ('Ingrese su nombre y la contraseña\n')
+    # Creando base de datos
+    connection = sqlite3.connect('Obra_social.db')
+    cursor = connection.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY,
+        nombre_us TEXT NOT NULL,
+        contrasena TEXT NOT NULL
+        )
+    ''' )
+    
+    # Datos a ingresar -----------
+    Datos_Inicio = [('Mariano', 'sistemas'), ('Dario', 'sistemas'), ('Martin', 'sistemas')]
+    #cursor.executemany ('INSERT INTO usuarios (nombre_us, contrasena) VALUES (?, ?)' , Datos_Inicio)
+    connection.commit()  # Guardar cambios || RECORDAR HACERLO SIEMPRE
+    cursor.execute('SELECT * FROM usuarios')
+    resultado = cursor.fetchall()
+    
+    # Validamos si el nombre que se ingrese coincide con los que estan en la base de datos 
+    # Creamos un contador, para que si supera los 3 intentos que se cierre el programa
+    fraude = 0
+    Intentos = 3 
+    while True:
+        Nombreinicio = input('Ingrese su nombre\n')
+        cursor.execute('SELECT * FROM usuarios WHERE nombre_us = ?', (Nombreinicio,))
+        Nombre_base = cursor.fetchall()
+        if Nombre_base:
+            limpiar_pantalla()
+            contrasena_inicio = input('Ingrse su contrasena\n')
+            cursor.execute('SELECT * FROM usuarios WHERE contrasena = ?', (contrasena_inicio,))
+            contra_base = cursor.fetchall()
+            if contra_base:
+                limpiar_pantalla()
+                print ('\t---Bienvenido---\n')
+                break
+            else:
+                limpiar_pantalla()
+                print ('Datos Incorrectos, te qudan', Intentos - (fraude + 1), ' Intentos\n')
+                fraude + 1
+        else:
+            limpiar_pantalla()
+            print ('Datos Incorrectos, te qudan', Intentos - (fraude + 1), ' Intentos\n')
+            fraude = fraude + 1
+            
+        if fraude == 3:
+            sys.exit()
