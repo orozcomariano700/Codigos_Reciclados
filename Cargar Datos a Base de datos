@@ -1,0 +1,36 @@
+while True:
+        nombre_cliente = input('Nombre: \t')
+        apellido_cliente = input('\nApellido: \t')
+        DNI_cliente = input('\nDNI: \t')
+        meses_restantes = input('\nMeses restantes por pagar: \t')
+        Cargar = [(nombre_cliente, apellido_cliente, DNI_cliente, meses_restantes)]
+        connection = sqlite3.connect('Obra_social.db')
+        cursor = connection.cursor()
+        cursor.execute(''' 
+            CREATE TABLE IF NOT EXISTS ventas( 
+            id INTEGER PRIMARY KEY, 
+            nombre TEXT NOT NULL, 
+            apellido TEXT NOT NULL, 
+            DNI INTEGER, 
+            meses_restantes INTEGER 
+             ) 
+        ''') 
+        connection.executemany('''
+            INSERT INTO ventas (nombre, apellido, DNI, meses_restantes) VALUES (?, ?, ?, ?)
+        ''', Cargar)
+        Valor = cursor.fetchall()
+        print (Valor)
+        print('Desea guardar al cliente?\n', 'S = si\t N=no\n')
+        index = input()
+        if index == 's':
+            connection.commit()
+            limpiar_pantalla()
+            print('\t---La informacion se guardo correctamente---\n')
+        else:
+            print('No se guardo la informacion\n')        
+        index = 0
+        index = input('Desea salir del programa\n', 'S = si\t N=no\n')
+        if index == 's':
+            break
+        else: 
+            limpiar_pantalla()
